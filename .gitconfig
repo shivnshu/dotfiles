@@ -9,3 +9,6 @@
 
 [diff]
 	tool = vimdiff
+
+[web]
+	browser = google-chrome
