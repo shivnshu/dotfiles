@@ -1,5 +1,8 @@
+
+cowsay "$(fortune)"
+
 # Path to your oh-my-zsh installation.
-  export ZSH=/home/shivanshu/.oh-my-zsh
+export ZSH=/home/shivnshu/.oh-my-zsh
 
 # Set name of the theme to load.
 # Look in ~/.oh-my-zsh/themes/
@@ -27,10 +30,13 @@ ZSH_THEME="agnoster"
 # DISABLE_AUTO_TITLE="true"
 
 # Uncomment the following line to enable command auto-correction.
-# ENABLE_CORRECTION="true"
+ENABLE_CORRECTION="true"
 
 # Uncomment the following line to display red dots whilst waiting for completion.
 COMPLETION_WAITING_DOTS="true"
+
+# Disable keybindings like Ctrl+D which accidentally close the terminal session
+set -o ignoreeof
 
 # Uncomment the following line if you want to disable marking untracked files
 # under VCS as dirty. This makes repository status check for large repositories
@@ -49,15 +55,11 @@ COMPLETION_WAITING_DOTS="true"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git)
-
-#plugins=(colored-man-pages)
-
-plugins=(zsh-syntax-highlighting)
+plugins=(git colored-man-pages extract node cp colorise)
 
 # User configuration
 
-  export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/shivanshu/.local/bin"
+export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/shivnshu/.local/bin"
 # export MANPATH="/usr/local/man:$MANPATH"
 
 source $ZSH/oh-my-zsh.sh
@@ -72,6 +74,10 @@ source $ZSH/oh-my-zsh.sh
 #   export EDITOR='mvim'
 # fi
 
+#Some programs use VISUAL
+export VISUAL=nvim
+export EDITOR="$VISUAL"
+
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
 
@@ -85,14 +91,12 @@ source $ZSH/oh-my-zsh.sh
 #
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
-alias e='exit'
 alias c='clear'
 alias idapro='sudo ~/CTF/Softwares/IDA\ Pro/idaq'
-alias lampp='sudo /opt/lampp/lampp'
 alias burpsuitepro='java -jar /usr/share/Burp_Suite_Pro_v1.5.20/BurpLoader.jar'
+alias sag='sudo apt-get'
+alias acs='apt-cache search'
 
-# alias ohmyzsh="mate ~/.oh-my-zsh"
+DEFAULT_USER=shivnshu
 
-export PATH="/home/shivanshu/anaconda2/bin:$PATH"
-
-DEFAULT_USER=shivanshu
+source /home/shivnshu/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
