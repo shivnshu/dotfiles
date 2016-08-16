@@ -1,75 +1,122 @@
-" All system-wide defaults are set in $VIMRUNTIME/debian.vim and sourced by
-" the call to :runtime you can find below.  If you wish to change any of those
-" settings, you should do it in this file (/etc/vim/vimrc), since debian.vim
-" will be overwritten everytime an upgrade of the vim packages is performed.
-" It is recommended to make changes after sourcing debian.vim since it alters
-" the value of the 'compatible' option.
+"PluginManagerUsed 'vim-plug' from https://github.com/junegunn/vim-plug
 
-" This line should not be removed as it ensures that various options are
-" properly set to work with the Vim-related packages available in Debian.
-runtime! debian.vim
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""PlugIns"""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-" Uncomment the next line to make Vim more Vi-compatible
-" NOTE: debian.vim sets 'nocompatible'.  Setting 'compatible' changes numerous
-" options, so any other options should be set AFTER setting 'compatible'.
-"set compatible
+call plug#begin('~/.vim/plugged')
 
-" Vim5 and later versions support syntax highlighting. Uncommenting the next
-" line enables syntax highlighting by default.
+Plug 'scrooloose/nerdcommenter'                                      " Used for writing comments(usage: \cc) 
+Plug 'scrooloose/nerdtree' , {'on': 'NERDTreeToggle'}                " Proper file explorer inside vim
+Plug 'flazz/vim-colorschemes'                                        " Colorschemes
+Plug 'tpope/vim-surround'                                            " Quick Surround with tags or Brackets
+Plug 'octol/vim-cpp-enhanced-highlight'                              " C++ syntax highlighter
+Plug 'Lokaltog/vim-easymotion'                                       " Easy Motion 
+Plug 'myusuf3/numbers.vim'                                           " Toggle between relative and normal numbering
+Plug 'sjl/gundo.vim'                                                 " Undo tree
+Plug 'marcweber/vim-addon-mw-utils'                                  " Todo: figureout its usage 
+Plug 'garbas/vim-snipmate'                                           " Snippets for reusable code
+Plug 'tpope/vim-fugitive'                                            " Git Wrapper
+Plug 'tomtom/tlib_vim'                                               " Required by other plugins
+Plug 'auto-pairs-gentle'                                             " Auto insert matching brackets
+Plug 'autoswap.vim'                                                  " Deals with swap messages errors 
+Plug 'godlygeek/tabular'                                             " Helps in alignment
+Plug 'plasticboy/vim-markdown'                                       " Markdown support for vim
+Plug 'jceb/vim-orgmode'                                              " Helps in scheduling of task, tags, todo 
+Plug 'cmdalias.vim'                                                  " Alias for commands(eg. cd for Cd)
+Plug 'Python-Syntax-Folding'                                         " Syntax folding for python
+Plug 'nvie/vim-flake8'                                               " Syntax and style checker for python code
+Plug 'bling/vim-airline'                                             " Status and tabline for vim
+Plug 'kien/ctrlp.vim'                                                " Fuzzy file searching
+Plug 'terryma/vim-multiple-cursors'                                  " Multiple Cursors like Sublime Text(usage: ctr-n)
+Plug 'kchmck/vim-coffee-script'                                      " Highlighting and syntax for coffeescript(language that compiles to JavaScript)
+Plug 'fatih/vim-go'                                                  " AutoCompletion syntax-highlighting
+Plug 'KabbAmine/zeavim.vim'                                          " Access zeal documentation from vim
+Plug 'Superbil/llvm.vim', { 'for': 'llvm' }                          " LLVM assembly files highlighting
+Plug 'rhysd/vim-clang-format'                                        " Formats the code with specific coding style using clang
+Plug '~/new_proj/vim/autorun'
+
+call plug#end()
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+colorscheme jellybeans                                               " Set colorscheme
+set shiftwidth=4                                                     " Indentation
 syntax on
+filetype plugin indent on
 
-" If using a dark background within the editing area and syntax highlighting
-" turn on this option as well
-set background=dark
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""Configs"""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-" Uncomment the following to have Vim jump to the last position when
-" reopening a file
-"if has("autocmd")
-"  au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
-"endif
+let NERDTreeIgnore=['\.pyc$', '__pycache__']                         " Ignoring .pyc files and __pycache__ folder
+let g:go_fmt_command = "goimports"                                   " Rewrite go file with correct imports
+set wildignore+=*/bin/*,main,*/__pycache__/*,*.pyc,*.swp
+set backspace=indent,eol,start                                       " Make backspace work with end of line and indents
+set foldmethod=syntax                                                " Auto Add folds - Trigger with za
+set foldlevel=9999                                                   " Keep folds open by default
+set scrolloff=12                                                     " Scroll Offset below and above the cursor
+set expandtab                                                        " Replace tab with spaces
+set softtabstop=4                                                    " Act like there are tabs not spaces
+set hidden                                                           " Hide abandoned buffers without message
+set wildmenu                                                         " Tab command completion in vim
+set ignorecase                                                       " Ignore case while searching
+set smartcase                                                        " Case sensitive if Capital included in search
+set incsearch                                                        " Incremental Searching - Search as you type
+set autoindent                                                       
+set smartindent
+set relativenumber                                                   " Relative numbering (Current line in line 0)
+set number                                                           " Line numbers - Hybrid mode when used with rnu
+set nowrap                                                           " NoWrap 
+set laststatus=2                                                     " Show status line for even 1 file
+set tags=~/.mytags                                                   " Path to generated tags
+set mouse=nv                                                         " Allow mouse usage in normal and visual modes
+set nohlsearch                                                       " Do not highlight all search suggestions.
+let g:airline_powerline_fonts = 1                                    " Powerline fonts
+let g:airline#extensions#tabline#enabled = 1                         " Show buffers above
 
-" Uncomment the following to have Vim load indentation rules and plugins
-" according to the detected filetype.
-"if has("autocmd")
-"  filetype plugin indent on
-"endif
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-" The following are commented out as they cause vim to behave a lot
-" differently from regular Vi. They are highly recommended though.
-"set showcmd		" Show (partial) command in status line.
-"set showmatch		" Show matching brackets.
-"set ignorecase		" Do case insensitive matching
-"set smartcase		" Do smart case matching
-"set incsearch		" Incremental search
-"set autowrite		" Automatically save before commands like :next and :make
-set hidden		" Hide buffers when they are abandoned
-"set mouse=a		" Enable mouse usage (all modes)
+let g:clang_format#style_options = {
+            \ "AccessModifierOffset" : -4,
+            \ "IndentWidth" : 4,
+            \ "TabWidth" : 4,
+            \ "AllowShortIfStatementsOnASingleLine" : "false",
+            \ "AllowShortBlocksOnASingleLine" : "false",
+            \ "AllowShortLoopsOnASingleLine" : "false",
+            \ "AlwaysBreakTemplateDeclarations" : "true",
+            \ "Standard" : "C++11" }
 
-" Source a global configuration file if available
-if filereadable("/etc/vim/vimrc.local")
-  source /etc/vim/vimrc.local
-endif
+set clipboard=unnamedplus
 
-"set number
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""KeyBindings""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+"NerdTree Toggle with F2
+inoremap <F2> <Esc>:NERDTreeToggle<CR>a                             
+nnoremap <F2> :NERDTreeToggle<CR>
+
+"Switch between absolte and relative numbers using plugin: numbers.vim
+nnoremap <F3> :NumbersToggle<CR>                                   
+nnoremap <F4> :NumbersOnOff<CR>
+
+"Undo graphical tree toggle
+nnoremap <F5> :GundoToggle<CR>
+
+"Show open buffers and helps in switching
+nnoremap <F6> :buffers<CR>:buffer<Space>
+
+"vim-easy motion shortcut
+nmap ,, <leader><leader>s
+
+"Switch buffers with Tab and Shift-Tab
+nnoremap  <silent>   <tab>  mq:bnext<CR>`q`
+nnoremap  <silent> <s-tab>  mq:bprevious<CR>`q`
 
 
-set nocompatible              " required
-filetype off                  " required
+vnoremap ,y "+yy
+nnoremap ,y "+yy
+vnoremap ,d "+dd
+nnoremap ,d "+dd
+vnoremap ,p "+p
+nnoremap ,p "+p
+vnoremap ,P "+P
+nnoremap ,P "+P
 
-" set the runtime path to include Vundle and initialize
-set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
 
-" alternatively, pass a path where Vundle should install plugins
-"call vundle#begin('~/some/path/here')
-
-" let Vundle manage Vundle, required
-Plugin 'gmarik/Vundle.vim'
-
-" Add all your plugins here (note older versions of Vundle used Bundle instead of Plugin)
-
-Plugin 'Valloric/YouCompleteMe'
-
-" All of your Plugins must be added before the following line
-call vundle#end()            " required
-filetype plugin indent on    " required
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
