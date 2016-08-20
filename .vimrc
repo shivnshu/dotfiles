@@ -108,6 +108,9 @@ nmap ,, <leader><leader>s
 nnoremap  <silent>   <tab>  mq:bnext<CR>`q`
 nnoremap  <silent> <s-tab>  mq:bprevious<CR>`q`
 
+" w!! force write with sudo even if forgot sudo vim
+cmap w!! w !sudo tee > /dev/null %
+
 
 vnoremap ,y "+yy
 nnoremap ,y "+yy
