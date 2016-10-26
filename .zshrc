@@ -1,5 +1,5 @@
 
-cowsay "$(fortune)"
+cowsay "$(fortune)";
 
 # Path to your oh-my-zsh installation.
 export ZSH=/home/shivnshu/.oh-my-zsh
@@ -36,7 +36,7 @@ ENABLE_CORRECTION="true"
 COMPLETION_WAITING_DOTS="true"
 
 # Disable keybindings like Ctrl+D which accidentally close the terminal session
-set -o ignoreeof
+#set -o ignoreeof
 
 # Uncomment the following line if you want to disable marking untracked files
 # under VCS as dirty. This makes repository status check for large repositories
@@ -77,6 +77,7 @@ source $ZSH/oh-my-zsh.sh
 #Some programs use VISUAL
 export VISUAL=nvim
 export EDITOR="$VISUAL"
+export LFS=/mnt/lfs
 
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
@@ -96,7 +97,9 @@ alias idapro='sudo ~/CTF/Softwares/IDA\ Pro/idaq'
 alias burpsuitepro='java -jar /usr/share/Burp_Suite_Pro_v1.5.20/BurpLoader.jar'
 alias sag='sudo apt-get'
 alias acs='apt-cache search'
-
+alias cc='clang'
+alias xampp='sudo /opt/lampp/xampp'
+alias androidstudio='/home/shivnshu/AndroidStudio/bin/studio.sh'
 DEFAULT_USER=shivnshu
 
-source /home/shivnshu/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source /home/shivnshu/.zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
