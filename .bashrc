@@ -113,3 +113,6 @@ if ! shopt -oq posix; then
   fi
 fi
 
+
+chmod +x ~/.vocab
+~/.vocab

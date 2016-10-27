@@ -105,3 +105,6 @@ alias androidstudio='/home/shivnshu/AndroidStudio/bin/studio.sh'
 DEFAULT_USER=shivnshu
 
 source $HOME/.zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+chmod +x ~/.vocab
+~/.vocab
