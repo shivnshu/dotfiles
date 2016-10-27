@@ -35,6 +35,7 @@ set $mod Mod4
 
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
+# Install SystemSanFrancisco Fonts from GitHub
 font pango:System San Francisco Display 12 
 
 # This font is widely installed, provides lots of unicode glyphs, right-to-left
