@@ -1,0 +1,6 @@
+.emacs.d/*
+!.emacs.d/init.el
+!.emacs.d/evil.el
+!.emacs.d/holy.el
+!.emacs.d/elisp/
+!.emacs.d/elisp/*
