@@ -5,10 +5,14 @@ import XMonad.Util.Run(spawnPipe)
 import XMonad.Util.EZConfig(additionalKeys)
 import System.IO
 
+myManageHook = composeAll
+        [ className =? "guake" --> doFloat
+        ]
+
 main = do
     xmproc <- spawnPipe "xmobar"    --Assuming xmobar is in $PATH and config file ~/.xmobarrc
     xmonad $ defaultConfig
-        { manageHook = manageDocks <+> manageHook defaultConfig
+        { manageHook = manageDocks <+> myManageHook <+>  manageHook defaultConfig
         , layoutHook = avoidStruts  $  layoutHook defaultConfig
         , logHook    = dynamicLogWithPP xmobarPP
                             { ppOutput = hPutStrLn xmproc
