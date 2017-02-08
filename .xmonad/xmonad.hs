@@ -6,9 +6,14 @@ import XMonad.Util.EZConfig(additionalKeys)
 import System.IO
 
 main = do
+    xmproc <- spawnPipe "xmobar"    --Assuming xmobar is in $PATH and config file ~/.xmobarrc
     xmonad $ defaultConfig
         { manageHook = manageDocks <+> manageHook defaultConfig
         , layoutHook = avoidStruts  $  layoutHook defaultConfig
+        , logHook    = dynamicLogWithPP xmobarPP
+                            { ppOutput = hPutStrLn xmproc
+                            , ppTitle  = xmobarColor "green" "" . shorten 50
+                            }
         , terminal   = "gnome-terminal"
         , modMask    = mod4Mask     --Bind Mod to Window Key
         } `additionalKeys`
