@@ -18,7 +18,7 @@ main = do
                             { ppOutput = hPutStrLn xmproc
                             , ppTitle  = xmobarColor "green" "" . shorten 50
                             }
-        , terminal   = "gnome-terminal"
+        , terminal   = "urxvt"
         , modMask    = mod4Mask     --Bind Mod to Window Key
         } `additionalKeys`
         [ ((mod4Mask .|. shiftMask, xK_z), spawn "xscreensaver-command -lock")
