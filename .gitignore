@@ -4,3 +4,8 @@
 !.emacs.d/holy.el
 !.emacs.d/elisp/
 !.emacs.d/elisp/*
+
+.xmonad/*
+!.xmonad/dzen2
+!.xmonad/xmonad.hs
+!.xmonad/.conky_dzen
