@@ -41,6 +41,10 @@ import qualified XMonad.StackSet as W
 import qualified Data.Map as M
 --}}}
 
+barFont  = "Literation Mono Powerline"
+barXFont = "Literation Mono Powerline:size=14"
+xftFont = "xft:literation mono powerline:size=14"
+
 -- Config {{{
 -- Define Terminal
 myTerminal      = "urxvt"
@@ -48,10 +52,10 @@ myTerminal      = "urxvt"
 myModMask :: KeyMask
 myModMask = mod4Mask
 -- Define workspaces
-myWorkSpaces    = ["1:main","2:web","3:vim","4:chat","5:music", "6:gimp", "7:misc"]
+myWorkSpaces    = ["1:Main","2:Web","3:Vim","4:Chat","5:Music", "6:Gimp", "7:Misc"]
 -- Dzen/Conky
-myXmonadBar = "dzen2 -x '0' -y '0' -h '24' -w '640' -ta 'l' -fg '#FFFFFF' -bg '#1B1D1E'"
-myStatusBar = "conky -c ~/.xmonad/.conky_dzen | dzen2 -x '640' -w '1280' -h '24' -ta 'r' -bg '#1B1D1E' -fg '#FFFFFF' -y '0'"
+myXmonadBar = "dzen2 -x '0' -y '0' -h '24' -w '960' -ta 'l' -fg '#FFFFFF' -bg '#1B1D1E' -fn '-*-terminus-*-r-normal-*-*-120-*-*-*-*-iso8859-*'"
+myStatusBar = "conky -c ~/.xmonad/.conky_dzen | dzen2 -x '960' -w '960' -h '24' -ta 'r' -bg '#1B1D1E' -fg '#FFFFFF' -y '0'"
 myBitmapsDir = "~/.xmonad/dzen2"
 --}}}
 -- Main {{{
@@ -63,7 +67,7 @@ main = do
       , workspaces          = myWorkSpaces
       , keys                = myKeys
       , modMask             = myModMask
-      , layoutHook          = gaps [(U,24)] $ Tall 1 (3/100) (1/2) ||| Full
+      , layoutHook          = gaps [(D,24)] $ Tall 1 (3/100) (1/2) ||| Full
       , manageHook          = myManageHook
       , logHook             = myLogHook dzenLeftBar >> fadeInactiveLogHook 0xdddddddd
       , normalBorderColor   = colorNormalBorder
@@ -78,11 +82,11 @@ main = do
 myManageHook :: ManageHook
 myManageHook = (composeAll . concat $
     [ [resource     =? r            --> doIgnore            |   r   <- myIgnores] -- ignore desktop
-    , [className    =? c            --> doShift  "1:main"   |   c   <- myDev    ] -- move dev to main
-    , [className    =? c            --> doShift  "2:web"    |   c   <- myWebs   ] -- move webs to main
-    , [className    =? c            --> doShift  "3:vim"    |   c   <- myVim    ] -- move webs to main
-    , [className    =? c            --> doShift	 "4:chat"   |   c   <- myChat   ] -- move chat to chat
-    , [className    =? c            --> doShift  "5:music"  |   c   <- myMusic  ] -- move music to music
+    , [className    =? c            --> doShift  "1:Main"   |   c   <- myDev    ] -- move dev to main
+    , [className    =? c            --> doShift  "2:Web"    |   c   <- myWebs   ] -- move webs to main
+    , [className    =? c            --> doShift  "3:Vim"    |   c   <- myVim    ] -- move webs to main
+    , [className    =? c            --> doShift	 "4:Chat"   |   c   <- myChat   ] -- move chat to chat
+    , [className    =? c            --> doShift  "5:Music"  |   c   <- myMusic  ] -- move music to music
 --    , [className    =? c            --> doShift  "6:misc"   |   c   <- myGimp   ] -- move img to div
     , [className    =? c            --> doCenterFloat       |   c   <- myFloats ] -- float my floats
     , [name         =? n            --> doCenterFloat       |   n   <- myNames  ] -- float my names
@@ -95,7 +99,7 @@ myManageHook = (composeAll . concat $
         name      = stringProperty "WM_NAME"
 
         -- classnames
-        myFloats  = ["Smplayer","MPlayer","VirtualBox","Xmessage","XFontSel","Downloads","Nm-connection-editor"]
+        myFloats  = ["Smplayer","MPlayer","VirtualBox","Xmessage","XFontSel","Downloads","Nm-connection-editor", "Guake"]
         myWebs    = ["Firefox","Google-chrome","Chromium", "Chromium-browser"]
         myMovie   = ["Boxee","Trine"]
         myMusic	  = ["Rhythmbox","Spotify"]
@@ -123,7 +127,7 @@ myLogHook h = dynamicLogWithPP $ defaultPP
       , ppHidden            =   dzenColor "white" "#1B1D1E" . pad
       , ppHiddenNoWindows   =   dzenColor "#7b7b7b" "#1B1D1E" . pad
       , ppUrgent            =   dzenColor "black" "red" . pad
-      , ppWsSep             =   " "
+      , ppWsSep             =   " | "
       , ppSep               =   "  |  "
       , ppLayout            =   dzenColor "#ebac54" "#1B1D1E" .
                                 (\x -> case x of
@@ -151,9 +155,6 @@ colorNormalBorder   = "#CCCCC6"
 colorFocusedBorder  = "#fd971f"
 
 
-barFont  = "terminus"
-barXFont = "inconsolata:size=12"
-xftFont = "xft: inconsolata-14"
 --}}}
 
 -- Prompt Config {{{
@@ -182,25 +183,25 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
     , ((modMask .|. shiftMask,      xK_Return   ), spawn $ XMonad.terminal conf)
 --    , ((modMask,                    xK_F2       ), spawn "gmrun")
     , ((modMask .|. shiftMask,      xK_c        ), kill)
---    , ((modMask .|. shiftMask,      xK_l        ), spawn "slock")
+    , ((modMask .|. shiftMask,      xK_l        ), spawn "slock")
     -- Programs
     , ((0,                          xK_Print    ), spawn "scrot -e 'mv $f ~/screenshots/'")
     , ((modMask,                    xK_m        ), spawn "nautilus --no-desktop --browser")
     -- Media Keys
-    , ((0,                          0x1008ff12  ), spawn "amixer -q sset Headphone toggle")        -- XF86AudioMute
-    , ((0,                          0x1008ff11  ), spawn "amixer -q sset Headphone 5%-")   -- XF86AudioLowerVolume
-    , ((0,                          0x1008ff13  ), spawn "amixer -q sset Headphone 5%+")   -- XF86AudioRaiseVolume
-
+    , ((0,                          0x1008ff12  ), spawn "pulseaudio-ctl mute")        -- XF86AudioMute
+    , ((0,                          0x1008ff11  ), spawn "pulseaudio-ctl down 10")   -- XF86AudioLowerVolume
+    , ((0,                          0x1008ff13  ), spawn "pulseaudio-ctl up 10")   -- XF86AudioRaiseVolume
+    , ((0,                          0x1008FF02  ), spawn "xbacklight -inc 10")
+    , ((0,                          0x1008FF03  ), spawn "xbacklight -dec 10")
     -- layouts
     , ((modMask,                    xK_space    ), sendMessage NextLayout)
     , ((modMask .|. shiftMask,      xK_space    ), setLayout $ XMonad.layoutHook conf)          -- reset layout on current desktop to default
     , ((modMask,                    xK_b        ), sendMessage ToggleStruts)
     , ((modMask,                    xK_n        ), refresh)
     , ((modMask,                    xK_Tab      ), windows W.focusDown)                         -- move focus to next window
-    , ((modMask,                    xK_j        ), windows W.focusDown)
-    , ((modMask,                    xK_k        ), windows W.focusUp  )
-    , ((modMask .|. shiftMask,      xK_j        ), windows W.swapDown)                          -- swap the focused window with the next window
-    , ((modMask .|. shiftMask,      xK_k        ), windows W.swapUp)                            -- swap the focused window with the previous window
+    , ((modMask .|. shiftMask,      xK_Tab      ), windows W.focusUp  )
+    , ((modMask .|. shiftMask,      xK_Down     ), windows W.swapDown)                          -- swap the focused window with the next window
+    , ((modMask .|. shiftMask,      xK_Up       ), windows W.swapUp)                            -- swap the focused window with the previous window
     , ((modMask,                    xK_Return   ), windows W.swapMaster)
     , ((modMask,                    xK_t        ), withFocused $ windows . W.sink)              -- Push window back into tiling
     , ((modMask,                    xK_h        ), sendMessage Shrink)                          -- %! Shrink a master area
@@ -225,15 +226,14 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
     [((m .|. modMask, k), windows $ f i)
         | (i, k) <- zip (XMonad.workspaces conf) [xK_1 .. xK_9]
         , (f, m) <- [(W.greedyView, 0), (W.shift, shiftMask)]]
-    ++
+--    ++
 
     --
     -- mod-{w,e,r}, Switch to physical/Xinerama screens 1, 2, or 3
     -- mod-shift-{w,e,r}, Move client to screen 1, 2, or 3
     --
-    [((m .|. modMask, key), screenWorkspace sc >>= flip whenJust (windows . f))
-        | (key, sc) <- zip [xK_w, xK_e] [1, 0]
-        , (f, m) <- [(W.view, 0), (W.shift, shiftMask)]]
+--    [((m .|. modMask, key), screenWorkspace sc >>= flip whenJust (windows . f))
+--        | (key, sc) <- zip [xK_w, xK_e] [1, 0]
+--        , (f, m) <- [(W.view, 0), (W.shift, shiftMask)]]
 
 --}}}
--- vim:foldmethod=marker sw=4 sts=4 ts=4 tw=0 et ai nowrap
