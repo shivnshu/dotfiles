@@ -1,17 +1,49 @@
 
-xmonad.hs:65:154: warning: [-Wdeprecations]
+xmonad.hs:24:1: warning: [-Wdeprecations]
+    Module ‘System.Taffybar.XMonadLog’ is deprecated:
+      Use TaffyPager instead.  This module will be removed.
+
+xmonad.hs:106:53: warning: [-Wdeprecations]
+    In the use of ‘dbusLogWithPP’
+    (imported from System.Taffybar.XMonadLog):
+    Deprecated: "Use TaffyPager instead.  This module will be removed."
+
+xmonad.hs:109:16: warning: [-Wdeprecations]
+    In the use of ‘taffybarDefaultPP’
+    (imported from System.Taffybar.XMonadLog):
+    Deprecated: "Use TaffyPager instead.  This module will be removed."
+
+xmonad.hs:110:17: warning: [-Wdeprecations]
+    In the use of ‘taffybarColor’
+    (imported from System.Taffybar.XMonadLog):
+    Deprecated: "Use TaffyPager instead.  This module will be removed."
+
+xmonad.hs:111:17: warning: [-Wdeprecations]
+    In the use of ‘taffybarColor’
+    (imported from System.Taffybar.XMonadLog):
+    Deprecated: "Use TaffyPager instead.  This module will be removed."
+
+xmonad.hs:112:17: warning: [-Wdeprecations]
+    In the use of ‘taffybarColor’
+    (imported from System.Taffybar.XMonadLog):
+    Deprecated: "Use TaffyPager instead.  This module will be removed."
+
+xmonad.hs:113:17: warning: [-Wdeprecations]
+    In the use of ‘taffybarColor’
+    (imported from System.Taffybar.XMonadLog):
+    Deprecated: "Use TaffyPager instead.  This module will be removed."
+
+xmonad.hs:114:17: warning: [-Wdeprecations]
+    In the use of ‘taffybarColor’
+    (imported from System.Taffybar.XMonadLog):
+    Deprecated: "Use TaffyPager instead.  This module will be removed."
+
+xmonad.hs:159:12: warning: [-Wdeprecations]
     In the use of ‘defaultConfig’
     (imported from XMonad, but defined in XMonad.Config):
     Deprecated: "Use def (from Data.Default, and re-exported by XMonad and XMonad.Config) instead."
 
-xmonad.hs:88:48: warning: [-Wtabs]
-    Tab character found here, and in four further locations.
-    Please use spaces instead.
-
-xmonad.hs:123:34: warning: [-Wdeprecations]
-    In the use of ‘defaultPP’ (imported from XMonad.Hooks.DynamicLog):
-    Deprecated: "Use def (from Data.Default, and re-exported by XMonad.Hooks.DynamicLog) instead."
-
-xmonad.hs:163:5: warning: [-Wdeprecations]
-    In the use of ‘defaultXPConfig’ (imported from XMonad.Prompt):
-    Deprecated: "Use def (from Data.Default, and re-exported from XMonad.Prompt) instead."
+xmonad.hs:165:54: warning: [-Wdeprecations]
+    In the use of ‘defaultConfig’
+    (imported from XMonad, but defined in XMonad.Config):
+    Deprecated: "Use def (from Data.Default, and re-exported by XMonad and XMonad.Config) instead."

@@ -1,185 +1,46 @@
--- ~/.xmonad/xmonad.hs
--- Imports {{{
+-- Imports.
+import qualified Data.Map    as M
+import Data.Ratio
+
 import XMonad
--- Prompt
-import XMonad.Prompt
-import XMonad.Prompt.RunOrRaise (runOrRaisePrompt)
-import XMonad.Prompt.AppendFile (appendFilePrompt)
--- Hooks
-import XMonad.Operations
+import XMonad.Actions.CopyWindow
+import XMonad.Hooks.DynamicLog
+import XMonad.Hooks.ManageDocks
+import XMonad.Actions.CycleWS
+import XMonad.Layout.Combo
+import XMonad.Layout.Grid
+import XMonad.Layout.Gaps
+import XMonad.Layout.LayoutModifier
+import XMonad.Layout.Named
+import XMonad.Layout.NoBorders
+import XMonad.Layout.PerWorkspace
+import XMonad.Layout.Reflect
+import XMonad.Layout.TwoPane
+import XMonad.Layout.WindowNavigation
+import XMonad.Layout.Circle
+import XMonad.Layout.MosaicAlt
+import XMonad.Layout.Spiral
+import DBus.Client
+import System.Taffybar.XMonadLog ( dbusLogWithPP, taffybarDefaultPP, taffybarColor, taffybarEscape )
+import qualified Debug.Trace as D
+import qualified XMonad.StackSet as W
+
+import XMonad.Hooks.EwmhDesktops (ewmh)
+import System.Taffybar.Hooks.PagerHints (pagerHints)
 
 import System.IO
 import System.Exit
 
-import XMonad.Util.Run
+--  Variables definition
+myTerminal = "urxvt"
+myModMask  = mod4Mask
+altMask    = mod1Mask
 
-import XMonad.Actions.CycleWS
+myWorkSpaces = ["1:Web", "2:Terminal", "3:Vim", "4:Chat", "5:Music", "6", "7", "8", "9"]
 
-import XMonad.Hooks.ManageDocks
-import XMonad.Hooks.ManageHelpers
-import XMonad.Hooks.SetWMName
-import XMonad.Hooks.DynamicLog
-import XMonad.Hooks.UrgencyHook
-import XMonad.Hooks.FadeInactive
-import XMonad.Hooks.EwmhDesktops
-
-import XMonad.Layout.NoBorders (smartBorders, noBorders)
-import XMonad.Layout.PerWorkspace (onWorkspace, onWorkspaces)
-import XMonad.Layout.Reflect (reflectHoriz)
-import XMonad.Layout.IM
-import XMonad.Layout.SimpleFloat
-import XMonad.Layout.Spacing
-import XMonad.Layout.ResizableTile
-import XMonad.Layout.LayoutHints
-import XMonad.Layout.LayoutModifier
-import XMonad.Layout.Grid
-import XMonad.Layout.Gaps
-
-import Data.Ratio ((%))
-
-import qualified XMonad.StackSet as W
-import qualified Data.Map as M
---}}}
-
-barFont  = "Literation Mono Powerline"
-barXFont = "Literation Mono Powerline:size=14"
-xftFont = "xft:literation mono powerline:size=14"
-
--- Config {{{
--- Define Terminal
-myTerminal      = "urxvt"
--- Define modMask
-myModMask :: KeyMask
-myModMask = mod4Mask
--- Define workspaces
-myWorkSpaces    = ["1:Main","2:Web","3:Vim","4:Chat","5:Music", "6:Gimp", "7:Misc"]
--- Dzen/Conky
-myXmonadBar = "dzen2 -x '0' -y '0' -h '24' -w '960' -ta 'l' -fg '#FFFFFF' -bg '#1B1D1E' -fn '-*-terminus-*-r-normal-*-*-120-*-*-*-*-iso8859-*'"
-myStatusBar = "conky -c ~/.xmonad/.conky_dzen | dzen2 -x '960' -w '960' -h '24' -ta 'r' -bg '#1B1D1E' -fg '#FFFFFF' -y '0'"
-myBitmapsDir = "~/.xmonad/dzen2"
---}}}
--- Main {{{
-main = do
-    dzenLeftBar <- spawnPipe myXmonadBar
-    dzenRightBar <- spawnPipe myStatusBar
-    xmonad $ withUrgencyHookC dzenUrgencyHook { args = ["-bg", "red", "fg", "black", "-xs", "1", "-y", "25"] } urgencyConfig { remindWhen = Every 15 } $ defaultConfig
-      { terminal            = myTerminal
-      , workspaces          = myWorkSpaces
-      , keys                = myKeys
-      , modMask             = myModMask
-      , layoutHook          = gaps [(D,24)] $ Tall 1 (3/100) (1/2) ||| Full
-      , manageHook          = myManageHook
-      , logHook             = myLogHook dzenLeftBar >> fadeInactiveLogHook 0xdddddddd
-      , normalBorderColor   = colorNormalBorder
-      , focusedBorderColor  = colorFocusedBorder
-      , borderWidth         = 2
-}
---}}}
-
-
--- Hooks {{{
--- ManageHook {{{
-myManageHook :: ManageHook
-myManageHook = (composeAll . concat $
-    [ [resource     =? r            --> doIgnore            |   r   <- myIgnores] -- ignore desktop
-    , [className    =? c            --> doShift  "1:Main"   |   c   <- myDev    ] -- move dev to main
-    , [className    =? c            --> doShift  "2:Web"    |   c   <- myWebs   ] -- move webs to main
-    , [className    =? c            --> doShift  "3:Vim"    |   c   <- myVim    ] -- move webs to main
-    , [className    =? c            --> doShift	 "4:Chat"   |   c   <- myChat   ] -- move chat to chat
-    , [className    =? c            --> doShift  "5:Music"  |   c   <- myMusic  ] -- move music to music
---    , [className    =? c            --> doShift  "6:misc"   |   c   <- myGimp   ] -- move img to div
-    , [className    =? c            --> doCenterFloat       |   c   <- myFloats ] -- float my floats
-    , [name         =? n            --> doCenterFloat       |   n   <- myNames  ] -- float my names
-    , [isFullscreen                 --> myDoFullFloat                           ]
-    ]) 
-
-    where
-
-        role      = stringProperty "WM_WINDOW_ROLE"
-        name      = stringProperty "WM_NAME"
-
-        -- classnames
-        myFloats  = ["Smplayer","MPlayer","VirtualBox","Xmessage","XFontSel","Downloads","Nm-connection-editor", "Guake"]
-        myWebs    = ["Firefox","Google-chrome","Chromium", "Chromium-browser"]
-        myMovie   = ["Boxee","Trine"]
-        myMusic	  = ["Rhythmbox","Spotify"]
-        myChat	  = ["Pidgin","Buddy List", "Psi", "Psi+", "chat", "psi"]
-        myDev	  = ["urxvt"]
-        myVim	  = ["vim", "nvim"]
-
-        -- resources
-        myIgnores = ["desktop","desktop_window","notify-osd","stalonetray","trayer"]
-
-        -- names
-        myNames   = ["bashrun","Google Chrome Options","Chromium Options"]
-
--- a trick for fullscreen but stil allow focusing of other WSs
-myDoFullFloat :: ManageHook
-myDoFullFloat = doF W.focusDown <+> doFullFloat
--- }}}
-
---Bar
-myLogHook :: Handle -> X ()
-myLogHook h = dynamicLogWithPP $ defaultPP
-    {
-        ppCurrent           =   dzenColor "#ebac54" "#1B1D1E" . pad
-      , ppVisible           =   dzenColor "white" "#1B1D1E" . pad
-      , ppHidden            =   dzenColor "white" "#1B1D1E" . pad
-      , ppHiddenNoWindows   =   dzenColor "#7b7b7b" "#1B1D1E" . pad
-      , ppUrgent            =   dzenColor "black" "red" . pad
-      , ppWsSep             =   " | "
-      , ppSep               =   "  |  "
-      , ppLayout            =   dzenColor "#ebac54" "#1B1D1E" .
-                                (\x -> case x of
-                                    "ResizableTall"             ->      "^i(" ++ myBitmapsDir ++ "/tall.xbm)"
-                                    "Mirror ResizableTall"      ->      "^i(" ++ myBitmapsDir ++ "/mtall.xbm)"
-                                    "Full"                      ->      "^i(" ++ myBitmapsDir ++ "/full.xbm)"
-                                    "Simple Float"              ->      "~"
-                                    _                           ->      x
-                                )
-      , ppTitle             =   (" " ++) . dzenColor "white" "#1B1D1E" . dzenEscape
-      , ppOutput            =   hPutStrLn h
-    }
-
--- Theme {{{
--- Color names are easier to remember:
-colorOrange         = "#FD971F"
-colorDarkGray       = "#1B1D1E"
-colorPink           = "#F92672"
-colorGreen          = "#A6E22E"
-colorBlue           = "#66D9EF"
-colorYellow         = "#E6DB74"
-colorWhite          = "#CCCCC6"
- 
-colorNormalBorder   = "#CCCCC6"
-colorFocusedBorder  = "#fd971f"
-
-
---}}}
-
--- Prompt Config {{{
-mXPConfig :: XPConfig
-mXPConfig =
-    defaultXPConfig { font                  = barFont
-                    , bgColor               = colorDarkGray
-                    , fgColor               = colorGreen
-                    , bgHLight              = colorGreen
-                    , fgHLight              = colorDarkGray
-                    , promptBorderWidth     = 0
-                    , height                = 14
-                    , historyFilter         = deleteConsecutive
-                    }
- 
--- Run or Raise Menu
-largeXPConfig :: XPConfig
-largeXPConfig = mXPConfig
-                { font = xftFont
-                , height = 22
-                }
--- }}}
 -- Key mapping {{{
 myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
-    [ ((modMask,                    xK_d        ), runOrRaisePrompt largeXPConfig)
+    [ ((modMask,                    xK_d        ), spawn "dmenu_run")
     , ((modMask .|. shiftMask,      xK_Return   ), spawn $ XMonad.terminal conf)
 --    , ((modMask,                    xK_F2       ), spawn "gmrun")
     , ((modMask .|. shiftMask,      xK_c        ), kill)
@@ -218,7 +79,7 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
     
     -- quit, or restart
     , ((modMask .|. shiftMask,      xK_q        ), io (exitWith ExitSuccess))
-    , ((modMask,                    xK_q        ), spawn "xmonad --recompile && xmonad --restart")
+    , ((modMask,                    xK_q        ), spawn "xmonad --recompile && xmonad --restart && notify-send 'Restarted XMonad'")
     ]
     ++
     -- mod-[1..9] %! Switch to workspace N
@@ -237,3 +98,74 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
 --        , (f, m) <- [(W.view, 0), (W.shift, shiftMask)]]
 
 --}}}
+
+-- The main function.
+main = do
+  client <- connectSession
+  let pp = myTaffyBarPP
+  xmonad $ ewmh $ pagerHints $ myConfig { logHook = dbusLogWithPP client pp }
+
+-- Custom PP.
+myTaffyBarPP = taffybarDefaultPP {
+    ppCurrent = taffybarColor "#f8f8f8" "DodgerBlue4"   . wrap " " " "
+  , ppVisible = taffybarColor "#f8f8f8" "LightSkyBlue4" . wrap " " " "
+  , ppUrgent  = taffybarColor "#f8f8f8" "red4"          . wrap " " " "
+  , ppLayout  = taffybarColor "DarkOrange" "" . wrap " [" "] "
+  , ppTitle   = taffybarColor "#61ce3c" "" . shorten 50
+  }
+
+-- Keybinding to toggle the gap for the bar.
+toggleStrutsKey XConfig {XMonad.modMask = modMask} = (modMask, xK_b)
+
+
+-- Layouts
+basicLayout = Tall nmaster delta ratio where
+    nmaster = 1
+    delta   = 3/100
+    ratio   = 1/2
+tallLayout       = named "tall"     $ avoidStruts $ basicLayout
+wideLayout       = named "wide"     $ avoidStruts $ Mirror basicLayout
+singleLayout     = named "single"   $ avoidStruts $ noBorders Full
+circleLayout     = named "circle"   $ Circle
+twoPaneLayout    = named "two pane" $ TwoPane (2/100) (1/2)
+mosaicLayout     = named "mosaic"   $ MosaicAlt M.empty
+gridLayout       = named "grid"     $ Grid
+spiralLayout     = named "spiral"   $ spiral (1 % 1)
+
+myLayoutHook = smartBorders $ tallLayout ||| wideLayout   ||| singleLayout ||| circleLayout ||| twoPaneLayout
+                                         ||| mosaicLayout ||| gridLayout   ||| spiralLayout
+
+myManageHook :: ManageHook
+myManageHook = (composeAll . concat $
+    [ [resource     =?  r           --> doIgnore                | r <-  myIgnores ]
+    , [className    =?  c           --> doShift "1:Web"         | c <-  myWebs    ]
+    , [className    =?  c           --> doShift "2:Terminal"    | c <-  myDev     ]
+    , [className    =?  c           --> doShift "3:Vim"         | c <-  myVim     ]
+    , [className    =?  c           --> doShift "4:Chat"        | c <-  myChat    ]
+    , [className    =?  c           --> doShift "5:Music"       | c <-  myMusic   ]
+    ])
+    
+    where
+      myWebs  = ["Firefox","Google-chrome"]
+      myDev   = ["urxvt"]
+      myVim   = ["vim","nvim"]
+      myChat  = [""]
+      myMusic = ["Rhythmbox"]
+
+      myIgnores = ["desktop","trayer"]
+
+
+-- Main config.
+myConfig = defaultConfig {
+    modMask            = myModMask
+  , terminal           = myTerminal
+--  , focusFollowsMouse  = False
+  , workspaces         = myWorkSpaces
+  , layoutHook         = gaps [(U,30)] $ Tall 1 (3/100) (1/2)  ||| Full 
+  , manageHook         = myManageHook <+> manageHook defaultConfig <+> manageDocks
+  , normalBorderColor  = "#2a2b2f"
+  , focusedBorderColor = "DarkOrange"
+  , borderWidth        = 1
+  , startupHook        = spawn "$HOME/.config/taffybar/taffybar"
+  , keys               = myKeys
+  }
