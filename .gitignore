@@ -1,12 +1,18 @@
-.emacs.d/*
-!.emacs.d/init.el
-!.emacs.d/evil.el
-!.emacs.d/holy.el
-!.emacs.d/elisp/
-!.emacs.d/elisp/*
+!emacs.d/
+
+emacs.d/*
+!emacs.d/init.el
+!emacs.d/evil.el
+!emacs.d/holy.el
+!emacs.d/elisp/
+!emacs.d/elisp/*
+
+!xmonad/
 
 xmonad/*
-!.xmonad/xmonad.hs
+!xmonad/xmonad.hs
+
+!config/taffybar/
 
 config/taffybar/*
 !config/taffybar/taffybar.hs
