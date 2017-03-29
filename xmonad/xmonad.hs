@@ -6,7 +6,9 @@ import XMonad
 import XMonad.Actions.CopyWindow
 import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.ManageDocks
+import XMonad.Hooks.ManageHelpers
 import XMonad.Actions.CycleWS
+
 import XMonad.Layout.Combo
 import XMonad.Layout.Grid
 import XMonad.Layout.Gaps
@@ -20,6 +22,8 @@ import XMonad.Layout.WindowNavigation
 import XMonad.Layout.Circle
 import XMonad.Layout.MosaicAlt
 import XMonad.Layout.Spiral
+import XMonad.Layout.SimpleFloat
+
 import DBus.Client
 import System.Taffybar.XMonadLog ( dbusLogWithPP, taffybarDefaultPP, taffybarColor, taffybarEscape )
 import qualified Debug.Trace as D
@@ -36,7 +40,7 @@ myTerminal = "urxvt"
 myModMask  = mod4Mask
 altMask    = mod1Mask
 
-myWorkSpaces = ["1:Web", "2:Terminal", "3:Vim", "4:Chat", "5:Music", "6", "7", "8", "9"]
+myWorkSpaces = ["1:Web", "2:Terminal", "3:Files", "4:Chat", "5:Music", "6", "7", "8", "9"]
 
 -- Key mapping {{{
 myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
@@ -79,7 +83,7 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
     
     -- quit, or restart
     , ((modMask .|. shiftMask,      xK_q        ), io (exitWith ExitSuccess))
-    , ((modMask,                    xK_q        ), spawn "xmonad --recompile && xmonad --restart && notify-send 'Restarted XMonad'")
+    , ((modMask,                    xK_q        ), spawn "xmonad --recompile && xmonad --restart")
     ]
     ++
     -- mod-[1..9] %! Switch to workspace N
@@ -115,7 +119,7 @@ myTaffyBarPP = taffybarDefaultPP {
   }
 
 -- Keybinding to toggle the gap for the bar.
-toggleStrutsKey XConfig {XMonad.modMask = modMask} = (modMask, xK_b)
+--toggleStrutsKey XConfig {XMonad.modMask = modMask} = (modMask, xK_b)
 
 
 -- Layouts
@@ -132,28 +136,33 @@ mosaicLayout     = named "mosaic"   $ MosaicAlt M.empty
 gridLayout       = named "grid"     $ Grid
 spiralLayout     = named "spiral"   $ spiral (1 % 1)
 
-myLayoutHook = smartBorders $ tallLayout ||| wideLayout   ||| singleLayout ||| circleLayout ||| twoPaneLayout
+myLayoutHook = tallLayout ||| wideLayout   ||| singleLayout ||| circleLayout ||| twoPaneLayout
                                          ||| mosaicLayout ||| gridLayout   ||| spiralLayout
 
 myManageHook :: ManageHook
 myManageHook = (composeAll . concat $
     [ [resource     =?  r           --> doIgnore                | r <-  myIgnores ]
+    , [className    =?  c           --> doFloat                 | c <-  myFloats  ]
     , [className    =?  c           --> doShift "1:Web"         | c <-  myWebs    ]
     , [className    =?  c           --> doShift "2:Terminal"    | c <-  myDev     ]
-    , [className    =?  c           --> doShift "3:Vim"         | c <-  myVim     ]
+    , [className    =?  c           --> doShift "3:Files"       | c <-  myFiles   ]
     , [className    =?  c           --> doShift "4:Chat"        | c <-  myChat    ]
     , [className    =?  c           --> doShift "5:Music"       | c <-  myMusic   ]
+    , [isFullscreen                 --> doFullFloat                             ]
     ])
     
     where
       myWebs  = ["Firefox","Google-chrome"]
-      myDev   = ["urxvt"]
-      myVim   = ["vim","nvim"]
-      myChat  = [""]
+      myDev   = ["Urxvt"]
+      myFiles = ["Nautilus"]
+      myChat  = ["Slack"]
       myMusic = ["Rhythmbox"]
 
       myIgnores = ["desktop","trayer"]
+      myFloats  = ["Guake"]
 
+myDoFullFloat :: ManageHook
+myDoFullFloat = doF W.focusDown <+> doFullFloat
 
 -- Main config.
 myConfig = defaultConfig {
@@ -161,11 +170,11 @@ myConfig = defaultConfig {
   , terminal           = myTerminal
 --  , focusFollowsMouse  = False
   , workspaces         = myWorkSpaces
-  , layoutHook         = gaps [(U,30)] $ Tall 1 (3/100) (1/2)  ||| Full 
-  , manageHook         = myManageHook <+> manageHook defaultConfig <+> manageDocks
+  , layoutHook         = avoidStruts $ smartBorders $ gaps [(U,30)] $ Tall 1 (3/100) (1/2)  ||| Full 
+  , manageHook         = manageDocks <+> manageHook defaultConfig <+> myManageHook
   , normalBorderColor  = "#2a2b2f"
   , focusedBorderColor = "DarkOrange"
-  , borderWidth        = 1
+  , borderWidth        = 2
   , startupHook        = spawn "$HOME/.config/taffybar/taffybar"
   , keys               = myKeys
   }

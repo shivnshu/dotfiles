@@ -31,21 +31,20 @@ myPagerConfig = defaultPagerConfig {  activeWorkspace = colorize "yellow" "" . w
                                    }
 
 myNetFormat :: String
-myNetFormat = "▼ $inKB$kb/s   ▲ $outKB$kb/s"
+myNetFormat = "▼ $inKB$kb/s  ▲ $outKB$kb/s"
 
 main = do
   let memCfg = defaultGraphConfig { graphDataColors = [(1, 0, 0, 1)]
-                                  , graphLabel = Just "mem"
+                                  , graphLabel = Just "RAM"
                                   }
       cpuCfg = defaultGraphConfig { graphDataColors = [ (0, 1, 0, 1)
                                                       , (1, 0, 1, 0.5)
                                                       ]
-                                  , graphLabel = Just "cpu"
+                                  , graphLabel = Just "CPU"
                                   }
   let clock = textClockNew Nothing "%a %b %_d %r" 1
       pager = taffyPagerNew myPagerConfig
       note = notifyAreaNew defaultNotificationConfig
-      wea = weatherNew (defaultWeatherConfig "KMSN") 10
       mpris = mpris2New
       mem = pollingGraphNew memCfg 1 memCallback
       cpu = pollingGraphNew cpuCfg 0.5 cpuCallback
@@ -53,6 +52,7 @@ main = do
       batt = batteryBarNew defaultBatteryConfig 30
       wnet = netMonitorNewWith 10 "wlp2s0" 1 myNetFormat
       enet = netMonitorNewWith 10 "enp0s20u1" 1 myNetFormat
+--      font  = "Monospace 20"
 
   defaultTaffybar defaultTaffybarConfig { startWidgets = [ pager, note ]
                                         , endWidgets = [ tray, clock, mem, cpu, batt, enet, wnet, mpris ]
