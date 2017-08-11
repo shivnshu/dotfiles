@@ -1,70 +1,64 @@
-;;; appearance.el --- Appearance settings
+;;; appearance.el --- config for appearance
 ;;; Commentary:
-;;; Contains settings related to appearance
 
 ;;; Code:
 
 (require 'use-package)
 
-;; Optional
-;; Looks awesome, but I've moved on from this
-;; (use-package powerline
-;;   :ensure t
-;;   :config
-;;   (powerline-default-theme)
-;;   (custom-set-faces
-;;    '(powerline-active1 ((t (:background "#eee8d5" :foreground "#215264"))))))
-
 ;; Highlight the current line
 (global-hl-line-mode)
 
-;; Pretty dark theme :)
+;; jbeans theme
 (use-package jbeans-theme
   :ensure t)
 
+;; cursor-chg package (change cursor as per the context)
 (use-package cursor-chg
   :ensure t
   :config
-  ;; Turn on change for overwrite, read-only, and input mode
-  ;; Also, gives a line cursor
-  ;; ^ The only reason I have it here
   (change-cursor-mode 1))
 
-;; To ensure theme etc are completely implemented
-;; When running in daemon mode (which is, all the time)
+;; Ensure that theme is loaded when running in daemon mode
 (if (daemonp)
     (add-hook 'after-make-frame-functions
-              (lambda (frame)
-                (select-frame frame)
-                (load-theme 'jbeans t)
+          (lambda (frame)
+        (select-frame frame)
+        (load-theme 'jbeans t)
 
-                ;; Font settings
-                (setq default-frame-alist '((font . "Literation Mono Powerline-14")
-                                            (alpha 95 95)))
-                (set-face-attribute 'default nil :height 140)
+        ;; Fonts
+        (setq default-frame-alist '((font . "Literation Mono Powerline-14")
+                        (alpha 95 95)
+                        ))
 
-                ;; Disable extra bells and whisles
-                (tool-bar-mode -1)
-                (scroll-bar-mode -1)
-                (blink-cursor-mode -1)
-                (menu-bar-mode -1))))
+        ;; Remove tools, scroll etc.
+        (tool-bar-mode -1)
+        (scroll-bar-mode -1)
+        (blink-cursor-mode -1)
+        (menu-bar-mode -1)
+        )))
 
-
+;; Fonts
 (setq default-frame-alist '((font . "Literation Mono Powerline-14")
-                            (alpha 95 95)))
+                (alpha 95 95)
+                ))
 
-;; ;; Again, to fix some stuff which doesn't work in non-daemon mode
+;; change font size when a file buffer loads
+;; use window-setup-hook as to run this function after settings up windows (bug fixed)
+(add-hook 'window-setup-hook (lambda () (set-face-attribute 'default nil :height 160)))
+
+;; fix stuff that doesn't work in non-daemon mode
 (when window-system
-  (setq frame-title-format '(buffer-file-name "%f" ("%b")))
-
   (load-theme 'jbeans t)
   (setq default-frame-alist '((font . "Literation Mono Powerline-14")
-                              (alpha 95 95)))
-  (set-face-attribute 'default nil :height 160)
+                              (alpha 95 95)
+                              ))
+
+  ;; tools, scroll etc.
   (tool-bar-mode -1)
   (scroll-bar-mode -1)
   (blink-cursor-mode -1)
-  (menu-bar-mode -1))
+  (menu-bar-mode -1)
+  )
 
 (provide 'appearance)
 ;;; appearance.el ends here

@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# Using Nvidia for X server
+#xrandr --setprovideroutputsource modesetting NVIDIA-0
+#xrandr --auto
+#xrandr --dpi 96 # fix high resolution
+
 # Load resources
 xrdb -merge .Xresources
 
@@ -19,15 +24,22 @@ xsetroot -solid midnightblue
 
 feh --bg-scale /home/shivnshu/Pictures/wallpaper.png
 
+# fix java issues
+#wmname LG3D
+
 # Fire up apps
 compton -f &
 #guake &
-slack &
+#slack &
+#thunderbird&
 blueman-applet&
 urxvtd --quiet --opendisplay --fork
 
 if [ -x /usr/bin/nm-applet ] ; then
    nm-applet --sm-disable &
 fi
+
+# For nvidia-docker
+#sudo -b nohup nvidia-docker-plugin > /tmp/nvidia-docker.log
 
 dbus-launch $WM 

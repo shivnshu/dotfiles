@@ -1,4 +1,4 @@
-;;; sudo-save.el --- 
+;;; sudo-save.el --- Allow saving files using sudo
 
 ;; Copyright (C) 2003 Free Software Foundation, Inc.
 

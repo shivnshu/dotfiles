@@ -12,8 +12,8 @@
     :config
     (setq powerline-default-separator 'wave)
     (spaceline-define-segment line-column
-      "The current line and column numbers."
-      "l:%l c:%2c")
+                              "The current line and column numbers."
+                              "l:%l c:%2c")
 
     (spaceline-helm-mode)
     (spaceline-toggle-battery-on)
@@ -24,13 +24,13 @@
     (spaceline-toggle-buffer-size-off)
 
     (spaceline-define-segment time
-      "The current time."
-      (format-time-string "%H:%M"))
+                              "The current time."
+                              (format-time-string "%H:%M"))
     (spaceline-define-segment date
-      "The current date."
-      (format-time-string "%h %d"))
+                              "The current date."
+                              (format-time-string "%h %d"))
     (spaceline-toggle-time-on)
     (spaceline-emacs-theme 'date 'time)))
-  
+
 (provide 'mode-line)
 ;;; mode-line.el ends here

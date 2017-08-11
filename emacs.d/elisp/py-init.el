@@ -1,4 +1,4 @@
-;;; py-init.el -- ts
+;;; py-init.el --- Emacs python development environment
 ;;; Commentary:
 
 ;;; Code:
