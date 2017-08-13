@@ -40,11 +40,11 @@ myTerminal = "urxvt"
 myModMask  = mod4Mask
 altMask    = mod1Mask
 
-myWorkSpaces = ["1:Web", "2:Terminal", "3:Files", "4:Chat", "5:Music", "6", "7", "8", "9"]
+myWorkSpaces = ["1:Web", "2:Terminal", "3:Files", "4:VMs", "5:Docs", "6:Music", "7:Email", "8:Chat", "9:Misc"]
 
 -- Key mapping {{{
 myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
-    [ ((modMask,                    xK_d        ), spawn "dmenu_run")
+    [ ((modMask,                    xK_d        ), spawn "dmenu_run -fn 'terminus-16'")
     , ((modMask .|. shiftMask,      xK_Return   ), spawn $ XMonad.terminal conf)
 --    , ((modMask,                    xK_F2       ), spawn "gmrun")
     , ((modMask .|. shiftMask,      xK_c        ), kill)
@@ -83,7 +83,7 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
     
     -- quit, or restart
     , ((modMask .|. shiftMask,      xK_q        ), io (exitWith ExitSuccess))
-    , ((modMask,                    xK_q        ), spawn "xmonad --recompile && xmonad --restart")
+    , ((modMask,                    xK_q        ), spawn "stack exec xmonad -- --recompile && stack exec xmonad -- --restart")
     ]
     ++
     -- mod-[1..9] %! Switch to workspace N
@@ -146,9 +146,9 @@ myManageHook = (composeAll . concat $
     , [className    =?  c           --> doShift "1:Web"         | c <-  myWebs    ]
     , [className    =?  c           --> doShift "2:Terminal"    | c <-  myDev     ]
     , [className    =?  c           --> doShift "3:Files"       | c <-  myFiles   ]
-    , [className    =?  c           --> doShift "4:Chat"        | c <-  myChat    ]
-    , [className    =?  c           --> doShift "5:Music"       | c <-  myMusic   ]
-    , [isFullscreen                 --> doFullFloat                             ]
+    , [className    =?  c           --> doShift "4:VMs"         | c <-  myVms    ]
+    , [className    =?  c           --> doShift "6:Music"       | c <-  myMusic   ]
+    , [isFullscreen                 --> myDoFullFloat                             ]
     ])
     
     where
@@ -157,7 +157,7 @@ myManageHook = (composeAll . concat $
       myFiles = ["Nautilus"]
       myChat  = ["Slack"]
       myMusic = ["Rhythmbox"]
-
+      myVms   = ["virtualbox", "virt-manager", "qemu"]
       myIgnores = ["desktop","trayer"]
       myFloats  = ["Guake"]
 
@@ -170,11 +170,13 @@ myConfig = defaultConfig {
   , terminal           = myTerminal
 --  , focusFollowsMouse  = False
   , workspaces         = myWorkSpaces
-  , layoutHook         = avoidStruts $ smartBorders $ gaps [(U,30)] $ Tall 1 (3/100) (1/2)  ||| Full 
-  , manageHook         = manageDocks <+> manageHook defaultConfig <+> myManageHook
+  , manageHook         = manageDocks <+> myManageHook <+> manageHook defaultConfig
+  , layoutHook         = avoidStruts $ smartBorders myLayoutHook 
+  {-, layoutHook         = avoidStruts $ smartBorders $ gaps [(U,30)] $ myLayoutHook -}
+  , handleEventHook    = docksEventHook <+> handleEventHook defaultConfig
   , normalBorderColor  = "#2a2b2f"
   , focusedBorderColor = "DarkOrange"
   , borderWidth        = 2
-  , startupHook        = spawn "$HOME/.config/taffybar/taffybar"
+  , startupHook        = spawn "stack exec taffybar"
   , keys               = myKeys
   }
